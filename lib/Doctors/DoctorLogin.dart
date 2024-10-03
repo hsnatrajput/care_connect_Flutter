@@ -7,12 +7,14 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
-class LoginScreen extends StatefulWidget {
+import 'DoctorSignUp.dart';
+
+class DoctorLoginScreen extends StatefulWidget {
   @override
-  State<LoginScreen> createState() => _LoginScreenState();
+  State<DoctorLoginScreen> createState() => _DoctorLoginScreenState();
 }
 
-class _LoginScreenState extends State<LoginScreen> {
+class _DoctorLoginScreenState extends State<DoctorLoginScreen> {
   final _auth = FirebaseAuth.instance;
   final _firestore = FirebaseFirestore.instance;
   final GoogleSignIn _googleSignIn = GoogleSignIn();
@@ -22,7 +24,48 @@ class _LoginScreenState extends State<LoginScreen> {
 
   bool isLoading = false;
 
-  Future<void> signInWithGoogle() async {
+  Future<void> signInWithEmailAndPassword() async {
+    try {
+      setState(() {
+        isLoading = true;
+      });
+
+      UserCredential userCredential = await _auth.signInWithEmailAndPassword(
+        email: _emailController.text.trim(),
+        password: _passwordController.text.trim(),
+      );
+
+      // Check if the user is a doctor by fetching the user from the 'doctors' collection
+      final doctorDoc = await _firestore
+          .collection('doctors')
+          .doc(userCredential.user!.uid)
+          .get();
+
+      if (doctorDoc.exists) {
+        // User is a doctor, navigate to the next screen
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => DoctorAppointmentPromoScreen()),
+        );
+      } else {
+        // User is not a doctor, show error message
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("You are not authorized to login as a doctor.")),
+        );
+        await _auth.signOut(); // Sign out the user to prevent unauthorized access
+      }
+    } on FirebaseAuthException catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(e.message ?? 'An error occurred')),
+      );
+    } finally {
+      setState(() {
+        isLoading = false;
+      });
+    }
+  }
+
+ /* Future<void> signInWithGoogle() async {
     try {
       setState(() {
         isLoading = true;
@@ -44,45 +87,25 @@ class _LoginScreenState extends State<LoginScreen> {
 
       UserCredential userCredential = await _auth.signInWithCredential(credential);
 
-      if (userCredential.additionalUserInfo!.isNewUser) {
-        await _firestore.collection('users').doc(userCredential.user!.uid).set({
-          'name': googleUser.displayName,
-          'email': googleUser.email,
-          'createdAt': DateTime.now(),
-          'photoUrl': googleUser.photoUrl,
-        });
+      // Check if the user is a doctor by fetching the user from the 'doctors' collection
+      final doctorDoc = await _firestore
+          .collection('doctors')
+          .doc(userCredential.user!.uid)
+          .get();
+
+      if (doctorDoc.exists) {
+        // User is a doctor, navigate to the next screen
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => DoctorAppointmentPromoScreen()),
+        );
+      } else {
+        // User is not a doctor, show error message
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("You are not authorized to login as a doctor.")),
+        );
+        await _auth.signOut(); // Sign out the user to prevent unauthorized access
       }
-
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => DoctorAppointmentPromoScreen()),
-      );
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(e.toString())),
-      );
-    } finally {
-      setState(() {
-        isLoading = false;
-      });
-    }
-  }
-
-  Future<void> signInWithEmailAndPassword() async {
-    try {
-      setState(() {
-        isLoading = true;
-      });
-
-      UserCredential userCredential = await _auth.signInWithEmailAndPassword(
-        email: _emailController.text.trim(),
-        password: _passwordController.text.trim(),
-      );
-
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => DoctorAppointmentPromoScreen()),
-      );
     } on FirebaseAuthException catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(e.message ?? 'An error occurred')),
@@ -92,7 +115,8 @@ class _LoginScreenState extends State<LoginScreen> {
         isLoading = false;
       });
     }
-  }
+  }*/
+
 
   @override
   Widget build(BuildContext context) {
@@ -105,7 +129,7 @@ class _LoginScreenState extends State<LoginScreen> {
           children: [
             SizedBox(height: 50),
             Text(
-              "WELCOME",
+              "WELCOME DOCTOR",
               style: TextStyle(
                 fontSize: 32,
                 fontWeight: FontWeight.bold,
@@ -172,7 +196,7 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
             ),
             SizedBox(height: 20),
-            Row(
+          /*  Row(
               children: [
                 Expanded(
                   child: Divider(color: Colors.black),
@@ -185,9 +209,9 @@ class _LoginScreenState extends State<LoginScreen> {
                   child: Divider(color: Colors.black),
                 ),
               ],
-            ),
+            ),*/
             SizedBox(height: 15),
-            ElevatedButton.icon(
+         /*   ElevatedButton.icon(
               onPressed: isLoading ? null : signInWithGoogle,
               icon: Image.asset('assets/images/google.png', height: 24),
               label: isLoading
@@ -200,7 +224,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   borderRadius: BorderRadius.circular(30.0),
                 ),
               ),
-            ),
+            ),*/
             Spacer(),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -208,9 +232,9 @@ class _LoginScreenState extends State<LoginScreen> {
                 Text("Don't have account? "),
                 GestureDetector(
                   onTap: () {
-                    Navigator.push(context, MaterialPageRoute(builder: (c) => SignUpScreen()));
+                    Navigator.push(context, MaterialPageRoute(builder: (c) => DoctorSignUpScreen()));
                   },
-                  child: Text(
+                  child: const Text(
                     "Sign up",
                     style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold),
                   ),

@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "481426157711",
+    "project_id": "care-connect-flutter",
+    "storage_bucket": "care-connect-flutter.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:481426157711:android:7dbc1b1412a593360dc0fa",
+        "android_client_info": {
+          "package_name": "com.example.care_connect"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDh0acpRe5ZUanNEssNOCHcDpwoCLO5K5w"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
