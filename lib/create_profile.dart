@@ -27,7 +27,7 @@ class ProfileSelectionScreen extends StatelessWidget {
               icon: Icons.person,
               label: 'Patient Profile',
               onTap: () {
-                Navigator.push(context, MaterialPageRoute(builder: (c)=>DoctorProfileScreen()));
+               /* Navigator.push(context, MaterialPageRoute(builder: (c)=>DoctorProfileScreen()));*/
               },
             ),
             SizedBox(height: 20),

@@ -118,7 +118,7 @@ class EditProfileScreen extends StatelessWidget {
                 Expanded(
                   child: ElevatedButton(
                     onPressed: () {
-                      Navigator.push(context, MaterialPageRoute(builder: (c)=>DoctorProfileScreen()));
+                    /*  Navigator.push(context, MaterialPageRoute(builder: (c)=>DoctorProfileScreen()));*/
                     },
                     child: Text('Cancel'),
                     style: ElevatedButton.styleFrom(
@@ -131,7 +131,7 @@ class EditProfileScreen extends StatelessWidget {
                 Expanded(
                   child: ElevatedButton(
                     onPressed: () {
-                      Navigator.push(context, MaterialPageRoute(builder: (c)=>DoctorProfileScreen()));
+                     /* Navigator.push(context, MaterialPageRoute(builder: (c)=>DoctorProfileScreen()));*/
                     },
                     child: Text('Save Changes'),
                     style: ElevatedButton.styleFrom(

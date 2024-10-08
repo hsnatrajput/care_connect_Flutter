@@ -1,14 +1,33 @@
 import 'package:care_connect/time_slot.dart';
 import 'package:flutter/material.dart';
 
-
-
 class DoctorProfileScreen extends StatelessWidget {
+  final String name;
+  final String specialty;
+  final String? imageUrl;
+  final String experience;
+  final int people;
+  final int reviews;
+  final int fee;
+  final String about;
+
+  DoctorProfileScreen({
+    required this.name,
+    required this.specialty,
+    this.imageUrl,
+    this.experience = '0 years',
+    this.people = 0,
+    this.reviews = 0,
+    this.fee = 0,
+    this.about = 'No additional information provided.',
+  });
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Color(0xFFABD5D5),
       appBar: AppBar(
+        backgroundColor: Color(0xFFABD5D5),
         title: Text('Doctor Profile'),
         actions: [
           IconButton(
@@ -34,18 +53,20 @@ class DoctorProfileScreen extends StatelessWidget {
               children: [
                 CircleAvatar(
                   radius: 40,
-                  backgroundImage: AssetImage('assets/doctor_avatar.png'), // Add your avatar asset here
+                  backgroundImage: imageUrl != null
+                      ? NetworkImage(imageUrl!)
+                      : AssetImage('assets/images/doc.png') as ImageProvider,
                 ),
                 SizedBox(width: 20),
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Dr. Ayesha Ali',
+                      name,
                       style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
                     ),
                     Text(
-                      'Dermatologist, Skin Specialist',
+                      specialty,
                       style: TextStyle(fontSize: 16, color: Colors.grey),
                     ),
                   ],
@@ -56,9 +77,9 @@ class DoctorProfileScreen extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                _buildBadge('12 years', 'Experience'),
-                _buildBadge('900+', 'People'),
-                _buildBadge('59+', 'Reviews'),
+                _buildBadge(experience, 'Experience'),
+                _buildBadge('$people+', 'People'),
+                _buildBadge('$reviews+', 'Reviews'),
               ],
             ),
             SizedBox(height: 20),
@@ -68,15 +89,18 @@ class DoctorProfileScreen extends StatelessWidget {
             ),
             SizedBox(height: 10),
             Text(
-              'Dr. Ayesha Ali obtained her degree and completed training in dermatology. She specializes in skin care and has pursued further specialty work in this field.',
+              about,
               style: TextStyle(fontSize: 16),
             ),
             Spacer(),
             ElevatedButton(
               onPressed: () {
-                Navigator.push(context, MaterialPageRoute(builder: (c)=>TimeSlotSelectionScreen()));
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (c) => TimeSlotSelectionScreen()),
+                );
               },
-              child: Text('Book Appointment - 1000 PKR'),
+              child: Text('Book Appointment - $fee PKR'),
               style: ElevatedButton.styleFrom(
                 minimumSize: Size(double.infinity, 50),
               ),

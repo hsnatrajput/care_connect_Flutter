@@ -283,7 +283,7 @@ class _DoctorSignUpScreenState extends State<DoctorSignUpScreen> {
                 ),
                 child: isLoading
                     ? CircularProgressIndicator(color: Colors.white)
-                    : Text(
+                    : const Text(
                   'SIGN UP',
                   style: TextStyle(fontSize: 18, color: Colors.white),
                 ),
