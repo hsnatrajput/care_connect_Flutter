@@ -61,8 +61,7 @@ class AppointmentDetailsScreen extends StatelessWidget {
                         children: [
                           Text(
                             'Age: ${appointment['age'] ?? 'N/A'}',  // Default to 'N/A' if age is null
-                            style: TextStyle(fontSize: 16),
-                          ),
+                            style: TextStyle(fontSize: 16),),
                           SizedBox(width: 20),
                           Text(
                             'Gender: ${appointment['gender'] ?? 'Unknown'}',  // Default to 'Unknown'

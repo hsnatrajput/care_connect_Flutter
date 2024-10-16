@@ -1,3 +1,4 @@
+import 'package:care_connect/Drawer.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
@@ -24,6 +25,7 @@ class FindDoctorScreen extends StatelessWidget {
         automaticallyImplyLeading: false,
         backgroundColor: Color(0xFFABD5D5),
       ),
+      drawer: MyDrawer(),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(

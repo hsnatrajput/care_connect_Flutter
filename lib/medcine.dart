@@ -39,7 +39,9 @@ class _MedicineListScreenState extends State<MedicineListScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Color(0xFFB8E6E6),
       appBar: AppBar(
+          backgroundColor: Color(0xFFB8E6E6),
         title: Text('Medicine List'),
       ),
       body: ListView.builder(
@@ -51,7 +53,7 @@ class _MedicineListScreenState extends State<MedicineListScreen> {
             subtitle: Text("\$${medicine.price.toString()}"),
             trailing: Icon(Icons.arrow_forward),
             onTap: () {
-              makePayment(medicine.price.toString(), 'USD', medicine.name);
+              makePayment(medicine.price.toString(), 'pkr', medicine.name);
             },
           );
         },
