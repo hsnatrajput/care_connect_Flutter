@@ -2,6 +2,7 @@ import 'package:care_connect/Doctors/DoctorLogin.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:intl/intl.dart'; // For formatting time
 
 class DoctorSignUpScreen extends StatefulWidget {
@@ -19,14 +20,15 @@ class _DoctorSignUpScreenState extends State<DoctorSignUpScreen> {
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
   TextEditingController experienceController = TextEditingController();
-  TextEditingController aboutController = TextEditingController(); // New About field controller
+  TextEditingController aboutController = TextEditingController();
+  TextEditingController feesController = TextEditingController();
 
   String? selectedSpecialty;
   TimeOfDay? _startTime;
   TimeOfDay? _endTime;
-
   bool isLoading = false;
 
+  // Available specialties
   List<String> specialties = [
     'Cardiologist',
     'Dermatologist',
@@ -34,6 +36,10 @@ class _DoctorSignUpScreenState extends State<DoctorSignUpScreen> {
     'Pediatrician',
     'General Physician',
   ];
+
+  // Available days
+  List<String> availableDays = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+  List<String> selectedDays = [];
 
   // Function to format TimeOfDay to readable string
   String _formatTime(TimeOfDay? time) {
@@ -63,7 +69,6 @@ class _DoctorSignUpScreenState extends State<DoctorSignUpScreen> {
 
   // Function to handle user registration
   Future<void> signUp() async {
-    // Check for empty fields
     if (nameController.text.isEmpty ||
         phoneController.text.isEmpty ||
         emailController.text.isEmpty ||
@@ -72,9 +77,11 @@ class _DoctorSignUpScreenState extends State<DoctorSignUpScreen> {
         selectedSpecialty == null ||
         _startTime == null ||
         _endTime == null ||
-        aboutController.text.isEmpty) {
+        feesController.text.isEmpty ||
+        aboutController.text.isEmpty ||
+        selectedDays.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Please fill in all fields')),
+        SnackBar(content: Text('Please fill in all fields and select available days')),
       );
       return; // Stop further execution if validation fails
     }
@@ -95,14 +102,21 @@ class _DoctorSignUpScreenState extends State<DoctorSignUpScreen> {
         'name': nameController.text.trim(),
         'phone': phoneController.text.trim(),
         'email': emailController.text.trim(),
+        'uid': userCredential.user!.uid,
         'specialty': selectedSpecialty,
         'experience': experienceController.text.trim(),
         'startTime': _formatTime(_startTime),
         'endTime': _formatTime(_endTime),
-        'about': aboutController.text.trim(), // Save about information
+        'fee': int.parse(feesController.text.trim()),
+        'about': aboutController.text.trim(),
+        'availableDays': selectedDays, // Save selected available days
         'createdAt': DateTime.now(),
+        'people': 0,
+        'rating': 0.0,
       });
-
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Doctor account created successfully')),
+      );
       // Navigate to login screen after successful signup
       Navigator.pushReplacement(context, MaterialPageRoute(builder: (c) => DoctorLoginScreen()));
 
@@ -186,6 +200,22 @@ class _DoctorSignUpScreenState extends State<DoctorSignUpScreen> {
                 ),
               ),
               SizedBox(height: 15),
+              TextField(
+                controller: feesController,
+                keyboardType: TextInputType.number,
+                inputFormatters: <TextInputFormatter>[
+                  FilteringTextInputFormatter.digitsOnly
+                ],
+                decoration: InputDecoration(
+                  labelText: 'Fee',
+                  prefixIcon: Icon(Icons.monetization_on),
+                  hintText: 'Enter your fee in rupees',
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(30.0),
+                  ),
+                ),
+              ),
+              SizedBox(height: 15),
               // Specialty Dropdown
               DropdownButtonFormField<String>(
                 decoration: InputDecoration(
@@ -212,6 +242,7 @@ class _DoctorSignUpScreenState extends State<DoctorSignUpScreen> {
               // Experience TextField
               TextField(
                 controller: experienceController,
+                keyboardType: TextInputType.number,
                 decoration: InputDecoration(
                   labelText: 'Experience (years)',
                   prefixIcon: Icon(Icons.work_outline),
@@ -244,7 +275,6 @@ class _DoctorSignUpScreenState extends State<DoctorSignUpScreen> {
                     decoration: InputDecoration(
                       labelText: 'Start Time',
                       prefixIcon: Icon(Icons.access_time),
-                      hintText: 'Select Start Time',
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(30.0),
                       ),
@@ -262,7 +292,6 @@ class _DoctorSignUpScreenState extends State<DoctorSignUpScreen> {
                     decoration: InputDecoration(
                       labelText: 'End Time',
                       prefixIcon: Icon(Icons.access_time),
-                      hintText: 'Select End Time',
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(30.0),
                       ),
@@ -270,25 +299,32 @@ class _DoctorSignUpScreenState extends State<DoctorSignUpScreen> {
                   ),
                 ),
               ),
-              SizedBox(height: 20),
-              // Sign Up Button
-              ElevatedButton(
-                onPressed: isLoading ? null : signUp, // Disable button while loading
-                style: ElevatedButton.styleFrom(
-                  padding: EdgeInsets.symmetric(vertical: 15.0, horizontal: 100.0),
-                  backgroundColor: Color(0xFF009688),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(30.0),
-                  ),
-                ),
-                child: isLoading
-                    ? CircularProgressIndicator(color: Colors.white)
-                    : const Text(
-                  'SIGN UP',
-                  style: TextStyle(fontSize: 18, color: Colors.white),
-                ),
+              SizedBox(height: 15),
+              // Available Days Checkboxes
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: availableDays.map((day) {
+                  return CheckboxListTile(
+                    title: Text(day),
+                    value: selectedDays.contains(day),
+                    onChanged: (bool? selected) {
+                      setState(() {
+                        if (selected == true) {
+                          selectedDays.add(day);
+                        } else {
+                          selectedDays.remove(day);
+                        }
+                      });
+                    },
+                  );
+                }).toList(),
               ),
-              SizedBox(height: 20),
+              SizedBox(height: 30),
+              // SignUp Button
+              ElevatedButton(
+                onPressed: isLoading ? null : signUp,
+                child: isLoading ? CircularProgressIndicator() : Text('Sign Up'),
+              ),
             ],
           ),
         ),

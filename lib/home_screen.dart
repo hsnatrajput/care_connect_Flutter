@@ -1,4 +1,5 @@
 import 'package:care_connect/find_doctor.dart';
+import 'package:care_connect/userbottomnavigation.dart';
 import 'package:flutter/material.dart';
 
 
@@ -22,7 +23,7 @@ class DoctorAppointmentPromoScreen extends StatelessWidget {
             SizedBox(height: 20),
             ElevatedButton(
               onPressed: () {
-                Navigator.push(context, MaterialPageRoute(builder: (c)=>FindDoctorScreen()));
+                Navigator.push(context, MaterialPageRoute(builder: (c)=>MainScreen()));
               },
               child: Text('GO'),
             ),

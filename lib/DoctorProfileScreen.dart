@@ -1,5 +1,9 @@
+import 'package:care_connect/personal_detail.dart';
 import 'package:care_connect/time_slot.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+
+import 'chatScreen.dart';
 
 class DoctorProfileScreen extends StatelessWidget {
   final String name;
@@ -7,19 +11,19 @@ class DoctorProfileScreen extends StatelessWidget {
   final String? imageUrl;
   final String experience;
   final int people;
-  final int reviews;
+  final double rating;
   final int fee;
   final String about;
-
+final String id;
   DoctorProfileScreen({
     required this.name,
     required this.specialty,
     this.imageUrl,
     this.experience = '0 years',
     this.people = 0,
-    this.reviews = 0,
+    this.rating = 0,
     this.fee = 0,
-    this.about = 'No additional information provided.',
+    this.about = 'No additional information provided.', required this.id,
   });
 
   @override
@@ -34,6 +38,8 @@ class DoctorProfileScreen extends StatelessWidget {
             icon: Icon(Icons.message),
             onPressed: () {
               // Add messaging functionality
+              Navigator.push(context, MaterialPageRoute(builder: (context) => ChatScreen(receiverId:id , senderId: FirebaseAuth.instance.currentUser!.uid, receiverName:name ,)));
+
             },
           ),
           IconButton(
@@ -79,7 +85,7 @@ class DoctorProfileScreen extends StatelessWidget {
               children: [
                 _buildBadge(experience, 'Experience'),
                 _buildBadge('$people+', 'People'),
-                _buildBadge('$reviews+', 'Reviews'),
+                _buildBadge('$rating+', 'Reviews'),
               ],
             ),
             SizedBox(height: 20),
@@ -97,7 +103,7 @@ class DoctorProfileScreen extends StatelessWidget {
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (c) => TimeSlotSelectionScreen()),
+                  MaterialPageRoute(builder: (c) => PersonalDetailsScreen(doctorId: id)),
                 );
               },
               child: Text('Book Appointment - $fee PKR'),

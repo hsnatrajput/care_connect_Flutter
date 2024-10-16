@@ -1,3 +1,4 @@
+import 'package:care_connect/start_screen.dart';
 import 'package:care_connect/track_progress.dart';
 import 'package:care_connect/welcome_screen.dart';
 import 'package:care_connect/login_screen.dart';
@@ -20,7 +21,7 @@ class MedicationExperienceScreen extends StatelessWidget {
                 SizedBox(width: 50), // Placeholder for time (if needed)
                 TextButton(
                   onPressed: () {
-                    Navigator.push(context, MaterialPageRoute(builder: (c)=>LoginScreen()));
+                    Navigator.push(context, MaterialPageRoute(builder: (c)=>StartScreen()));
                   },
                   child: Text(
                     'Skip',

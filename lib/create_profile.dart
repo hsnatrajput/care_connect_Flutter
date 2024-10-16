@@ -1,4 +1,4 @@
-import 'package:care_connect/drayesha_screen.dart';
+import 'package:care_connect/DoctorProfileScreen.dart';
 import 'package:care_connect/signup_screen.dart';
 import 'package:flutter/material.dart';
 

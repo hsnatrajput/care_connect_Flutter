@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
-import 'drayesha_screen.dart';
+import 'DoctorProfileScreen.dart';
 
 class FindDoctorScreen extends StatelessWidget {
   // Map of specialty to icons
@@ -115,9 +115,13 @@ class FindDoctorScreen extends StatelessWidget {
               context,
               MaterialPageRoute(
                 builder: (c) => DoctorProfileScreen(
+                  id: doc.id,
                   name: doc['name'],
                   specialty: doc['specialty'],
                   imageUrl: _getImageUrl(doc),
+                  people: doc['people'] ?? '0',
+                  fee: doc['fee'] ?? '0',
+                  rating: doc['rating'] ?? '0.0',
                   experience: doc['experience'] ?? '0 years',
                   about: doc['about'] ?? 'No additional information provided.',
                 ),
@@ -172,7 +176,9 @@ class DoctorCategoryScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Color(0xFFABD5D5),
       appBar: AppBar(
+        backgroundColor: Color(0xFFABD5D5),
         title: Text('$specialty Doctors'),
       ),
       body: StreamBuilder<QuerySnapshot>(
@@ -226,6 +232,11 @@ class DoctorCategoryScreen extends StatelessWidget {
                   name: name,
                   specialty: specialty,
                   imageUrl: imageUrl,
+                  people: doc['people'] ?? '0',
+                  fee: doc['fee'] ?? '0',
+                  rating: doc['rating'] ?? '0.0',
+                  experience: doc['experience'] ?? '0 years',
+                  about: doc['about'] ?? 'No additional information provided.', id: doc.id,
                 ),
               ),
             );

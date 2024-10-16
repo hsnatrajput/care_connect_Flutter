@@ -1,11 +1,38 @@
-import 'package:care_connect/forget_password2.dart';
+import 'package:care_connect/signup_screen.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:care_connect/forget_password2.dart';
 
-class ForgetPasswordScreen extends StatelessWidget {
+class ForgetPasswordScreen extends StatefulWidget {
+  @override
+  _ForgetPasswordScreenState createState() => _ForgetPasswordScreenState();
+}
+
+class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
+  final TextEditingController emailController = TextEditingController();
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+
+  // Method to send password reset email
+  Future<void> resetPassword() async {
+    try {
+      await _auth.sendPasswordResetEmail(email: emailController.text.trim());
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Password reset link sent! Check your email.')),
+      );
+      Navigator.push(
+          context, MaterialPageRoute(builder: (c) => ForgetPasswordScreenTwo()));
+    } catch (e) {
+      print(e);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error: ${e.toString()}')),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        backgroundColor: Color(0xFFABD5D5), // Light blue background color
+      backgroundColor: Color(0xFFABD5D5), // Light blue background color
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
@@ -32,6 +59,7 @@ class ForgetPasswordScreen extends StatelessWidget {
               SizedBox(height: 20),
               // Email TextField
               TextField(
+                controller: emailController,
                 decoration: InputDecoration(
                   filled: true,
                   fillColor: Colors.white,
@@ -43,25 +71,11 @@ class ForgetPasswordScreen extends StatelessWidget {
                   ),
                 ),
               ),
-              SizedBox(height: 16),
-              // Phone TextField (if needed)
-              TextField(
-                decoration: InputDecoration(
-                  filled: true,
-                  fillColor: Colors.white,
-                  hintText: 'Enter your phone number',
-                  prefixIcon: Icon(Icons.phone, color: Colors.teal),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(30),
-                    borderSide: BorderSide.none,
-                  ),
-                ),
-              ),
               SizedBox(height: 24),
               // "Send Instructions" Button
               ElevatedButton(
                 onPressed: () {
-                  Navigator.push(context, MaterialPageRoute(builder: (c)=>ForgetPasswordScreenTwo()));
+                  resetPassword();
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Color(0xFF009688), // Teal color
@@ -80,6 +94,7 @@ class ForgetPasswordScreen extends StatelessWidget {
               GestureDetector(
                 onTap: () {
                   // Navigate to sign up screen
+                  Navigator.push(context, MaterialPageRoute(builder: (c) => SignUpScreen()));
                 },
                 child: Text(
                   "Don't have an account? Sign up",
@@ -98,5 +113,3 @@ class ForgetPasswordScreen extends StatelessWidget {
     );
   }
 }
-
-

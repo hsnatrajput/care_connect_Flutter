@@ -1,3 +1,4 @@
+
 import 'package:care_connect/forget_password2.dart';
 import 'package:care_connect/forget_password_screen.dart';
 import 'package:care_connect/home_screen.dart';
@@ -8,6 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
 import 'DoctorSignUp.dart';
+import 'appointment_detail.dart';
 
 class DoctorLoginScreen extends StatefulWidget {
   @override
@@ -45,7 +47,7 @@ class _DoctorLoginScreenState extends State<DoctorLoginScreen> {
         // User is a doctor, navigate to the next screen
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => DoctorAppointmentPromoScreen()),
+          MaterialPageRoute(builder: (context) => AppointmentDetailsScreen()),
         );
       } else {
         // User is not a doctor, show error message
@@ -124,15 +126,17 @@ class _DoctorLoginScreenState extends State<DoctorLoginScreen> {
       backgroundColor: Color(0xFFB8E6E6), // Light blue background
       body: Padding(
         padding: const EdgeInsets.all(20.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
+        child: ListView(
+
           children: [
             SizedBox(height: 50),
-            Text(
-              "WELCOME DOCTOR",
-              style: TextStyle(
-                fontSize: 32,
-                fontWeight: FontWeight.bold,
+            Center(
+              child: Text(
+                "WELCOME DOCTOR",
+                style: TextStyle(
+                  fontSize: 32,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
             ),
             SizedBox(height: 20),

@@ -23,7 +23,7 @@ class StartScreen extends StatelessWidget {
             ),
             SizedBox(height: 30),
             // Start Button
-            TextButton(
+           /* TextButton(
               onPressed: () {
                 // Define your start button action here
                 Navigator.push(context, MaterialPageRoute(builder: (c)=>LoginScreen()));
@@ -38,7 +38,7 @@ class StartScreen extends StatelessWidget {
 
               ),
               child: Text('START'),
-            ),
+            ),*/
             ElevatedButton(
               onPressed: (){
                 Navigator.push(context, MaterialPageRoute(builder: (c)=>LoginScreen()));

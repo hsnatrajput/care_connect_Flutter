@@ -19,7 +19,7 @@ class TrackProgressScreen extends StatelessWidget {
                 SizedBox(width: 50), // Placeholder for time (if needed)
                 TextButton(
                   onPressed: () {
-                    Navigator.push(context, MaterialPageRoute(builder: (c)=>LoginScreen()));
+                    Navigator.push(context, MaterialPageRoute(builder: (c)=>StartScreen()));
                   },
                   child: Text(
                     'Skip',

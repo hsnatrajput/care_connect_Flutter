@@ -40,6 +40,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
         'name': nameController.text.trim(),
         'phone': phoneController.text.trim(),
         'email': emailController.text.trim(),
+        'userId': userCredential.user!.uid,
         'createdAt': DateTime.now(),
       });
 
@@ -122,8 +123,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
       backgroundColor: Color(0xFFABD5D5), // Light blue background color
       body: Padding(
         padding: const EdgeInsets.all(20.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
+        child:ListView (
+
           children: [
             SizedBox(height: 50), // Adjust top padding
             Image.asset(
