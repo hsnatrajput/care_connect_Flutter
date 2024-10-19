@@ -1,6 +1,7 @@
 import 'package:care_connect/Doctors/appointment_detail.dart';
+import 'package:care_connect/Doctors/editdoctorProfile.dart';
 import 'package:care_connect/Doctors/userlist.dart';
-import 'package:care_connect/edit_doctor_profile.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 
@@ -17,7 +18,7 @@ class _doctornavigationState extends State<doctornavigation> {
   final List<Widget> _screens = [
    AppointmentDetailsScreen(),
     UserListScreen(),
-    EditProfileScreen(),
+    EditDoctorProfile(doctorId: FirebaseAuth.instance.currentUser!.uid),
   ];
 
   // Function to handle index changes

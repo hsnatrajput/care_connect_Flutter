@@ -1,5 +1,5 @@
 
-import 'package:care_connect/forget_password2.dart';
+
 import 'package:care_connect/forget_password_screen.dart';
 import 'package:care_connect/home_screen.dart';
 import 'package:care_connect/signup_screen.dart';
@@ -8,6 +8,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
+import 'BottomNavigationbar.dart';
 import 'DoctorSignUp.dart';
 import 'appointment_detail.dart';
 
@@ -47,7 +48,7 @@ class _DoctorLoginScreenState extends State<DoctorLoginScreen> {
         // User is a doctor, navigate to the next screen
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => AppointmentDetailsScreen()),
+          MaterialPageRoute(builder: (context) => doctornavigation()),
         );
       } else {
         // User is not a doctor, show error message
@@ -126,7 +127,7 @@ class _DoctorLoginScreenState extends State<DoctorLoginScreen> {
       backgroundColor: Color(0xFFB8E6E6), // Light blue background
       body: Padding(
         padding: const EdgeInsets.all(20.0),
-        child: ListView(
+        child: Column(
 
           children: [
             SizedBox(height: 50),

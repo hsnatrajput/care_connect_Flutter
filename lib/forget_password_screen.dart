@@ -1,7 +1,7 @@
 import 'package:care_connect/signup_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:care_connect/forget_password2.dart';
+
 
 class ForgetPasswordScreen extends StatefulWidget {
   @override
@@ -19,8 +19,7 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Password reset link sent! Check your email.')),
       );
-      Navigator.push(
-          context, MaterialPageRoute(builder: (c) => ForgetPasswordScreenTwo()));
+
     } catch (e) {
       print(e);
       ScaffoldMessenger.of(context).showSnackBar(

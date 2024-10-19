@@ -97,6 +97,7 @@ class _UserListScreenState extends State<UserListScreen> {
     return Scaffold(
       backgroundColor: Color(0xFFABD5D5),
       appBar: AppBar(
+        automaticallyImplyLeading: false,
         backgroundColor: Color(0xFFABD5D5),
         title: Text('User List'),
       ),

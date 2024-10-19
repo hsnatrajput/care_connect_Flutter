@@ -1,3 +1,4 @@
+import 'package:care_connect/Doctors/drdrawer.dart';
 import 'package:care_connect/Doctors/userlist.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -15,6 +16,7 @@ class AppointmentDetailsScreen extends StatelessWidget {
         title: Text('Appointment Details'),
         backgroundColor: Color(0xFFB8E6E6),
       ),
+      drawer: DrDrawer(),
       body: FutureBuilder<QuerySnapshot>(
         future: _fetchAppointments(),
         builder: (context, snapshot) {

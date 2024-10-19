@@ -22,7 +22,7 @@ class FindDoctorScreen extends StatelessWidget {
       backgroundColor: Color(0xFFABD5D5),
       appBar: AppBar(
         title: Text('Find a Doctor'),
-        automaticallyImplyLeading: false,
+
         backgroundColor: Color(0xFFABD5D5),
       ),
       drawer: MyDrawer(),
@@ -110,27 +110,33 @@ class FindDoctorScreen extends StatelessWidget {
               : AssetImage('assets/images/doc.png'),
         ),
         title: Text(doc['name']),
-        subtitle: Text(doc['specialty']),
-        trailing: ElevatedButton(
-          onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (c) => DoctorProfileScreen(
-                  id: doc.id,
-                  name: doc['name'],
-                  specialty: doc['specialty'],
-                  imageUrl: _getImageUrl(doc),
-                  people: doc['people'] ?? '0',
-                  fee: doc['fee'] ?? '0',
-                  rating: doc['rating'] ?? '0.0',
-                  experience: doc['experience'] ?? '0 years',
-                  about: doc['about'] ?? 'No additional information provided.',
-                ),
-              ),
-            );
-          },
-          child: Text('Book Appointment'),
+        subtitle: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(doc['specialty']),
+            SizedBox(height: 5,),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (c) => DoctorProfileScreen(
+                      id: doc.id,
+                      name: doc['name'],
+                      specialty: doc['specialty'],
+                      imageUrl: _getImageUrl(doc),
+                      people: doc['people'] ?? '0',
+                      fee: doc['fee'] ?? '0',
+                      rating: doc['rating'] ?? '0.0',
+                      experience: doc['experience'] ?? '0 years',
+                      about: doc['about'] ?? 'No additional information provided.',
+                    ),
+                  ),
+                );
+              },
+              child: Text('Book Appointment'),
+            ),
+          ],
         ),
       ),
     );
@@ -216,34 +222,43 @@ class DoctorCategoryScreen extends StatelessWidget {
     final String specialty = doc['specialty'];
     final String? imageUrl = _getImageUrl(doc);
 
-    return Card(
-      child: ListTile(
-        leading: CircleAvatar(
-          backgroundImage: imageUrl != null
-              ? NetworkImage(imageUrl)
-              : AssetImage('assets/images/doc.png'),
-        ),
-        title: Text(name),
-        subtitle: Text(specialty),
-        trailing: ElevatedButton(
-          onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => DoctorProfileScreen(
-                  name: name,
-                  specialty: specialty,
-                  imageUrl: imageUrl,
-                  people: doc['people'] ?? '0',
-                  fee: doc['fee'] ?? '0',
-                  rating: doc['rating'] ?? '0.0',
-                  experience: doc['experience'] ?? '0 years',
-                  about: doc['about'] ?? 'No additional information provided.', id: doc.id,
-                ),
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Card(
+        child: ListTile(
+          leading: CircleAvatar(
+            backgroundImage: imageUrl != null
+                ? NetworkImage(imageUrl)
+                : AssetImage('assets/images/doc.png'),
+          ),
+          title: Text(name),
+          subtitle: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(specialty),
+              SizedBox(height: 5,),
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => DoctorProfileScreen(
+                        name: name,
+                        specialty: specialty,
+                        imageUrl: imageUrl,
+                        people: doc['people'] ?? '0',
+                        fee: doc['fee'] ?? '0',
+                        rating: doc['rating'] ?? '0.0',
+                        experience: doc['experience'] ?? '0 years',
+                        about: doc['about'] ?? 'No additional information provided.', id: doc.id,
+                      ),
+                    ),
+                  );
+                },
+                child: Text('Book Appointment'),
               ),
-            );
-          },
-          child: Text('Book Appointment'),
+            ],
+          ),
         ),
       ),
     );

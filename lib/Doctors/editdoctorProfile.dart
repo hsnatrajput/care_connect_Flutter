@@ -130,6 +130,7 @@ class _EditDoctorProfileState extends State<EditDoctorProfile> {
     return Scaffold(
       backgroundColor: Color(0xFFABD5D5),
       appBar: AppBar(
+        automaticallyImplyLeading: false,
         backgroundColor: Color(0xFFABD5D5),
         title: Text('Edit Doctor Profile'),
       ),

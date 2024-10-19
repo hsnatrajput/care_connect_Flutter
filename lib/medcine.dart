@@ -41,6 +41,7 @@ class _MedicineListScreenState extends State<MedicineListScreen> {
     return Scaffold(
       backgroundColor: Color(0xFFB8E6E6),
       appBar: AppBar(
+        automaticallyImplyLeading: false,
           backgroundColor: Color(0xFFB8E6E6),
         title: Text('Medicine List'),
       ),
@@ -53,7 +54,7 @@ class _MedicineListScreenState extends State<MedicineListScreen> {
             subtitle: Text("\$${medicine.price.toString()}"),
             trailing: Icon(Icons.arrow_forward),
             onTap: () {
-              makePayment(medicine.price.toString(), 'pkr', medicine.name);
+              makePayment(medicine.price.toString(), 'usd', medicine.name);
             },
           );
         },
