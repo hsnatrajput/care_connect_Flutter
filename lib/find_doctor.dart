@@ -4,7 +4,12 @@ import 'package:flutter/material.dart';
 
 import 'DoctorProfileScreen.dart';
 
-class FindDoctorScreen extends StatelessWidget {
+class FindDoctorScreen extends StatefulWidget {
+  @override
+  _FindDoctorScreenState createState() => _FindDoctorScreenState();
+}
+
+class _FindDoctorScreenState extends State<FindDoctorScreen> {
   // Map of specialty to icons
   final Map<String, IconData> specialtyIcons = {
     'Cardiologist': Icons.favorite,
@@ -13,8 +18,10 @@ class FindDoctorScreen extends StatelessWidget {
     'Psychiatrist': Icons.psychology,
     'Pediatrician': Icons.child_care,
     'Allergist': Icons.filter_vintage,
-    // Add more specialties with icons as needed
   };
+
+  final TextEditingController _searchController = TextEditingController();
+  String searchQuery = '';
 
   @override
   Widget build(BuildContext context) {
@@ -22,7 +29,6 @@ class FindDoctorScreen extends StatelessWidget {
       backgroundColor: Color(0xFFABD5D5),
       appBar: AppBar(
         title: Text('Find a Doctor'),
-
         backgroundColor: Color(0xFFABD5D5),
       ),
       drawer: MyDrawer(),
@@ -31,6 +37,7 @@ class FindDoctorScreen extends StatelessWidget {
         child: Column(
           children: [
             TextField(
+              controller: _searchController,
               decoration: InputDecoration(
                 hintText: 'Search for doctors',
                 prefixIcon: Icon(Icons.search),
@@ -38,6 +45,11 @@ class FindDoctorScreen extends StatelessWidget {
                   borderRadius: BorderRadius.circular(8.0),
                 ),
               ),
+              onChanged: (value) {
+                setState(() {
+                  searchQuery = value.toLowerCase();
+                });
+              },
             ),
             SizedBox(height: 20),
             Expanded(
@@ -54,9 +66,15 @@ class FindDoctorScreen extends StatelessWidget {
 
                   final doctors = snapshot.data!.docs;
 
+                  // Filter doctors based on the search query
+                  final filteredDoctors = doctors.where((doc) {
+                    final name = (doc['name'] as String).toLowerCase();
+                    return name.contains(searchQuery);
+                  }).toList();
+
                   // Categorize doctors based on their specialties
                   Map<String, List<DocumentSnapshot>> categorizedDoctors = {};
-                  for (var doc in doctors) {
+                  for (var doc in filteredDoctors) {
                     var specialty = doc['specialty'];
                     if (!categorizedDoctors.containsKey(specialty)) {
                       categorizedDoctors[specialty] = [];
@@ -84,8 +102,8 @@ class FindDoctorScreen extends StatelessWidget {
                         style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                       ),
                       SizedBox(height: 10),
-                      // Display doctors in a particular category
-                      ...doctors.map((doc) {
+                      // Display filtered doctors
+                      ...filteredDoctors.map((doc) {
                         return _buildDoctorCard(context, doc);
                       }).toList(),
                     ],
@@ -99,8 +117,6 @@ class FindDoctorScreen extends StatelessWidget {
     );
   }
 
-  // Extracts doctor data and creates a doctor card
-  // Builds a card for each doctor
   Widget _buildDoctorCard(BuildContext context, DocumentSnapshot doc) {
     return Card(
       child: ListTile(
@@ -111,9 +127,10 @@ class FindDoctorScreen extends StatelessWidget {
         ),
         title: Text(doc['name']),
         subtitle: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(doc['specialty']),
-            SizedBox(height: 5,),
+            SizedBox(height: 5),
             ElevatedButton(
               onPressed: () {
                 Navigator.push(
@@ -137,13 +154,10 @@ class FindDoctorScreen extends StatelessWidget {
             ),
           ],
         ),
-
       ),
     );
   }
 
-
-  // Builds a card for each category with an icon and a click listener
   Widget _buildCategoryCard(BuildContext context, String specialty) {
     return GestureDetector(
       onTap: () {
@@ -170,7 +184,6 @@ class FindDoctorScreen extends StatelessWidget {
     );
   }
 
-  // Extract imageUrl with proper null-check
   String? _getImageUrl(DocumentSnapshot doc) {
     final data = doc.data() as Map<String, dynamic>;
     return data.containsKey('imageUrl') ? data['imageUrl'] as String : null;
