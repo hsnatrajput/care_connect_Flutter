@@ -28,7 +28,7 @@ class _DoctorListScreenState extends State<DoctorListScreen> {
         final receiverId = doc['receiver'];
         if (!userIds.contains(receiverId)) {
           userIds.add(receiverId);
-          final userSnapshot = await _firestore.collection('users').doc(receiverId).get();
+          final userSnapshot = await _firestore.collection('doctors').doc(receiverId).get();
           if (userSnapshot.exists) {
             final userData = userSnapshot.data() as Map<String, dynamic>;
             usersData.add({
@@ -50,7 +50,7 @@ class _DoctorListScreenState extends State<DoctorListScreen> {
         final senderId = doc['sender'];
         if (!userIds.contains(senderId)) {
           userIds.add(senderId);
-          final userSnapshot = await _firestore.collection('doctors').doc(senderId).get();
+          final userSnapshot = await _firestore.collection('users').doc(senderId).get();
           if (userSnapshot.exists) {
             final userData = userSnapshot.data() as Map<String, dynamic>;
             usersData.add({
@@ -67,28 +67,34 @@ class _DoctorListScreenState extends State<DoctorListScreen> {
   }
 
   Widget _buildUserItem(Map<String, dynamic> userData) {
-    return ListTile(
-      title: Row(children: [
-        const CircleAvatar(
-          backgroundImage: AssetImage('assets/images/avatarman.png'),
-        ),
-        SizedBox(width: 10),
-        Text(userData['name']),
-      ]),
-      subtitle: Text(userData['email']),
-      onTap: () {
-        // Navigate to chat screen with this user
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => ChatScreen(
-              senderId: FirebaseAuth.instance.currentUser!.uid,
-              receiverId: userData['userId'],
-              receiverName: userData['name'],
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Card(
+
+        child: ListTile(
+          title: Row(children: [
+            const CircleAvatar(
+              backgroundImage: AssetImage('assets/images/avatarman.png'),
             ),
-          ),
-        );
-      },
+            SizedBox(width: 10),
+            Text(userData['name']),
+          ]),
+          subtitle: Text(userData['email']),
+          onTap: () {
+            // Navigate to chat screen with this user
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => ChatScreen(
+                  senderId: FirebaseAuth.instance.currentUser!.uid,
+                  receiverId: userData['userId'],
+                  receiverName: userData['name'],
+                ),
+              ),
+            );
+          },
+        ),
+      ),
     );
   }
 
@@ -99,7 +105,7 @@ class _DoctorListScreenState extends State<DoctorListScreen> {
       appBar: AppBar(
         automaticallyImplyLeading: false,
         backgroundColor: Color(0xFFABD5D5),
-        title: Text('User List'),
+        title: Text('Doctors Chat List'),
       ),
       body: StreamBuilder<List<Map<String, dynamic>>>(
         stream: _userListStream,

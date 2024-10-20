@@ -67,28 +67,33 @@ class _UserListScreenState extends State<UserListScreen> {
   }
 
   Widget _buildUserItem(Map<String, dynamic> userData) {
-    return ListTile(
-      title: Row(children: [
-        const CircleAvatar(
-          backgroundImage: AssetImage('assets/images/avatarman.png'),
-        ),
-        SizedBox(width: 10),
-        Text(userData['name']),
-      ]),
-      subtitle: Text(userData['email']),
-      onTap: () {
-        // Navigate to chat screen with this user
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => ChatScreen(
-              senderId: FirebaseAuth.instance.currentUser!.uid,
-              receiverId: userData['userId'],
-              receiverName: userData['name'],
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Card(
+        child: ListTile(
+          title: Row(children: [
+            const CircleAvatar(
+              backgroundImage: AssetImage('assets/images/avatarman.png'),
             ),
-          ),
-        );
-      },
+            SizedBox(width: 10),
+            Text(userData['name']),
+          ]),
+          subtitle: Text(userData['email']),
+          onTap: () {
+            // Navigate to chat screen with this user
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => ChatScreen(
+                  senderId: FirebaseAuth.instance.currentUser!.uid,
+                  receiverId: userData['userId'],
+                  receiverName: userData['name'],
+                ),
+              ),
+            );
+          },
+        ),
+      ),
     );
   }
 
