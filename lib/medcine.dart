@@ -54,7 +54,7 @@ class _MedicineListScreenState extends State<MedicineListScreen> {
             subtitle: Text("\$${medicine.price.toString()}"),
             trailing: Icon(Icons.arrow_forward),
             onTap: () {
-              makePayment(medicine.price.toString(), 'usd', medicine.name);
+              makePayment(medicine.price.toString(), 'USD', medicine.name);
             },
           );
         },

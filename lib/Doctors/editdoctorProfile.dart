@@ -113,7 +113,7 @@ class _EditDoctorProfileState extends State<EditDoctorProfile> {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         content: Text('Profile updated successfully'),
       ));
-       Navigator.pop(context);
+
       // Navigate back or perform another action on success
     } catch (e) {
       print('Error updating profile: $e');

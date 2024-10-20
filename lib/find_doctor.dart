@@ -111,7 +111,6 @@ class FindDoctorScreen extends StatelessWidget {
         ),
         title: Text(doc['name']),
         subtitle: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(doc['specialty']),
             SizedBox(height: 5,),
@@ -138,6 +137,7 @@ class FindDoctorScreen extends StatelessWidget {
             ),
           ],
         ),
+
       ),
     );
   }
@@ -158,6 +158,7 @@ class FindDoctorScreen extends StatelessWidget {
         child: Padding(
           padding: const EdgeInsets.all(8.0),
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Icon(specialtyIcons[specialty] ?? Icons.local_hospital, size: 40),
               SizedBox(height: 10),
@@ -259,6 +260,7 @@ class DoctorCategoryScreen extends StatelessWidget {
               ),
             ],
           ),
+
         ),
       ),
     );

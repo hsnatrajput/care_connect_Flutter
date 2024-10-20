@@ -42,12 +42,12 @@ final String id;
 
             },
           ),
-          IconButton(
+         /* IconButton(
             icon: Icon(Icons.call),
             onPressed: () {
               // Add calling functionality
             },
-          ),
+          ),*/
         ],
       ),
       body: Padding(
