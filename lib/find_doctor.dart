@@ -1,4 +1,5 @@
 import 'package:care_connect/Drawer.dart';
+import 'package:care_connect/notification.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
@@ -30,6 +31,9 @@ class _FindDoctorScreenState extends State<FindDoctorScreen> {
       appBar: AppBar(
         title: Text('Find a Doctor'),
         backgroundColor: Color(0xFFABD5D5),
+        actions: [
+          IconButton(onPressed: ()=>Navigator.push(context, MaterialPageRoute(builder: (c)=>NotificationsScreen())), icon: Icon(Icons.notifications))
+        ],
       ),
       drawer: MyDrawer(),
       body: Padding(

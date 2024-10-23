@@ -147,7 +147,12 @@ class _TimeSlotSelectionScreenState extends State<TimeSlotSelectionScreen> {
       await FirebaseFirestore.instance.collection('doctors').doc(widget.doctorId).update({
         'people': FieldValue.increment(1),
       });
-
+      // Save the notification in Firestore
+      await FirebaseFirestore.instance.collection('notifications').add({
+        'userId': FirebaseAuth.instance.currentUser!.uid,
+        'message': 'Payment successfully sent and Appointment placed with ${doctorData!['name']}.',
+        'timestamp': DateTime.now(),
+      });
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Appointment booked successfully')),
       );
