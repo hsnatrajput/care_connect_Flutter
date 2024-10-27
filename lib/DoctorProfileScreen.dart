@@ -2,6 +2,7 @@ import 'package:care_connect/personal_detail.dart';
 import 'package:care_connect/time_slot.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import 'chatScreen.dart';
 
@@ -15,6 +16,7 @@ class DoctorProfileScreen extends StatelessWidget {
   final int fee;
   final String about;
 final String id;
+final String phone;
   DoctorProfileScreen({
     required this.name,
     required this.specialty,
@@ -23,8 +25,20 @@ final String id;
     this.people = 0,
     this.rating = 0,
     this.fee = 0,
+    this.phone='',
     this.about = 'No additional information provided.', required this.id,
   });
+  Future<void> makePhoneCall(String phoneNumber) async {
+    final Uri launchUri = Uri(
+      scheme: 'tel',
+      path: phoneNumber,
+    );
+    if (await canLaunchUrl(launchUri)) {
+      await launchUrl(launchUri);
+    } else {
+      throw 'Could not launch $phoneNumber';
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -42,12 +56,13 @@ final String id;
 
             },
           ),
-         /* IconButton(
+          IconButton(
             icon: Icon(Icons.call),
             onPressed: () {
               // Add calling functionality
+              makePhoneCall(phone);
             },
-          ),*/
+          ),
         ],
       ),
       body: Padding(

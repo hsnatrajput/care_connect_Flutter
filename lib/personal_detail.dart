@@ -84,6 +84,7 @@ class _PersonalDetailsScreenState extends State<PersonalDetailsScreen> {
                     _weight = value;
                   },
                 ),
+                SizedBox(height: 20),
                 TextFormField(
                   decoration: InputDecoration(
                     labelText: 'Patient age',
@@ -150,7 +151,7 @@ class _PersonalDetailsScreenState extends State<PersonalDetailsScreen> {
                     _problemDescription = value;
                   },
                 ),
-              
+                SizedBox(height: 20),
                 ElevatedButton(
                   onPressed: () {
                     if (_formKey.currentState!.validate()) {
