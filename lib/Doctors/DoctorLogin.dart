@@ -48,7 +48,7 @@ class _DoctorLoginScreenState extends State<DoctorLoginScreen> {
         // User is a doctor, navigate to the next screen
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => doctornavigation()),
+          MaterialPageRoute(builder: (context) => DoctorNavigation()),
         );
       } else {
         // User is not a doctor, show error message

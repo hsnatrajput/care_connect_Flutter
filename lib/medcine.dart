@@ -15,8 +15,11 @@ class _MedicineListScreenState extends State<MedicineListScreen> {
   TextEditingController addressController = TextEditingController();
   TextEditingController searchController = TextEditingController();
   List<Medicine> filteredMedicines = [];
+  Map<String, int> cart = {};  // Cart to hold medicine name and quantity
+  Map<String, dynamic>? paymentIntentData;
 
   final List<Medicine> medicines = [
+    // Your medicine list...
     Medicine(name: "Paracetamol", price: 10.0, imageUrl: 'https://th.bing.com/th/id/OIP.Ro2MSWVL2Ykmyvvi2BcWgQHaHa?rs=1&pid=ImgDetMain'),
     Medicine(name: "Ibuprofen", price: 15.0, imageUrl: 'https://www.emeds.pk/upload/pro-imges/image-18/33a.webp'),
     Medicine(name: "Aspirin", price: 12.0, imageUrl: 'https://image.made-in-china.com/2f0j00moDVdSKseMRN/Aspirin-Tablets-300mg-10X10-prime-S-Box-Western-Medicine.jpg'),
@@ -38,37 +41,50 @@ class _MedicineListScreenState extends State<MedicineListScreen> {
     Medicine(name: "Simvastatin", price: 27.0, imageUrl: 'https://th.bing.com/th/id/R.26bc48e71a9a6c350465ea1aff11155e?rik=HGSu1HHYpBl0oQ&pid=ImgRaw&r=0&sres=1&sresct=1'),
     Medicine(name: "Metoprolol", price: 18.0, imageUrl: 'https://th.bing.com/th/id/OIP.KoYUWUdePs8AEQUYdIMqWwHaEH?rs=1&pid=ImgDetMain'),
   ];
-  Map<String, dynamic>? paymentIntentData;
+
   @override
   void initState() {
     super.initState();
     filteredMedicines = medicines;
-    searchController.addListener(() {
-      filterMedicines();
-    });
+    searchController.addListener(filterMedicines);
   }
 
   void filterMedicines() {
     setState(() {
       filteredMedicines = medicines.where((medicine) {
-        return medicine.name
-            .toLowerCase()
-            .contains(searchController.text.toLowerCase());
+        return medicine.name.toLowerCase().contains(searchController.text.toLowerCase());
       }).toList();
     });
+  }
+
+  double calculateTotalPrice() {
+    double total = 0.0;
+    cart.forEach((name, quantity) {
+      final medicine = medicines.firstWhere((med) => med.name == name);
+      total += medicine.price * quantity;
+    });
+    return total;
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Color(0xFFB8E6E6),
-
       appBar: AppBar(
         automaticallyImplyLeading: false,
         backgroundColor: Color(0xFFB8E6E6),
         title: Center(child: Text('Medicine')),
+        actions: [
+          IconButton(
+            icon: Icon(
+              Icons.shopping_cart,
+              color: cart.isNotEmpty ? Colors.red : Colors.black, // Change color if cart is not empty
+            ),
+            onPressed: _showCartDialog,
+          ),
+        ],
       ),
-      body:Column(
+      body: Column(
         children: [
           Padding(
             padding: const EdgeInsets.all(10.0),
@@ -97,70 +113,162 @@ class _MedicineListScreenState extends State<MedicineListScreen> {
               itemCount: filteredMedicines.length,
               itemBuilder: (context, index) {
                 final medicine = filteredMedicines[index];
-                return GestureDetector(
-                  onTap: () {
-                    _showAddressDialog(medicine);
-                  },
-                  child: Card(
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(15),
-                    ),
-                    elevation: 5,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        Expanded(
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.vertical(
-                              top: Radius.circular(15),
-                            ),
-                            child: Image.network(
-                              medicine.imageUrl,
-                              fit: BoxFit.cover,
-                            ),
+                final quantity = cart[medicine.name] ?? 0; // Get quantity from cart
+
+                return Card(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(15),
+                  ),
+                  elevation: 5,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      Expanded(
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.vertical(
+                            top: Radius.circular(15),
+                          ),
+                          child: Image.network(
+                            medicine.imageUrl,
+                            fit: BoxFit.cover,
                           ),
                         ),
-                        Padding(
-                          padding: EdgeInsets.all(8.0),
-                          child: Text(
-                            medicine.name,
-                            style: TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                            ),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.all(8.0),
+                        child: Text(
+                          medicine.name,
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
                           ),
                         ),
-                        Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 8.0),
-                          child: Text(
-                            "\$${medicine.price.toString()}",
-                            style: TextStyle(
-                              fontSize: 16,
-                              color: Colors.green,
-                            ),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 8.0),
+                        child: Text(
+                          "\$${medicine.price.toString()}",
+                          style: TextStyle(
+                            fontSize: 16,
+                            color: Colors.green,
                           ),
                         ),
-                      ],
-                    ),
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          IconButton(
+                            icon: Icon(Icons.remove),
+                            onPressed: quantity > 0
+                                ? () {
+                              setState(() {
+                                if (cart[medicine.name]! > 1) {
+                                  cart[medicine.name] = cart[medicine.name]! - 1;
+                                } else {
+                                  cart.remove(medicine.name); // Remove from cart if quantity is 0
+                                }
+                              });
+                            }
+                                : null,
+                          ),
+                          Text(
+                            quantity > 0 ? "$quantity" : "0",
+                            style: TextStyle(fontSize: 16),
+                          ),
+                          IconButton(
+                            icon: Icon(Icons.add),
+                            onPressed: () {
+                              setState(() {
+                                cart[medicine.name] = quantity + 1; // Increase quantity
+                              });
+                            },
+                          ),
+                        ],
+                      ),
+                    ],
                   ),
                 );
               },
             ),
           ),
+          // Display the total amount below the GridView
+          cart.isNotEmpty?Padding(
+            padding: const EdgeInsets.all(10.0),
+            child: InkWell(
+              onTap: ()=>_showCartDialog(),
+              child: Container(
+                width: double.infinity,
+                padding: EdgeInsets.all(15),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+              
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black12,
+                      blurRadius: 4,
+                      offset: Offset(2, 2),
+                    ),
+                  ],
+                ),
+                child: Row(
+                  children: [
+                    Text(
+                      "Total Amount: \$${calculateTotalPrice().toStringAsFixed(2)}",
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black,
+                      ),
+                    ),
+                    SizedBox(width: 10,),
+                    Icon(Icons.shopping_cart)
+                  ],
+                ),
+              ),
+            ),
+          ):SizedBox.shrink(),
         ],
       ),
+      floatingActionButton: cart.isNotEmpty
+          ? FloatingActionButton(
+        onPressed: () {
+          setState(() {
+            cart.clear();
+          });
+        },
+        child: Icon(Icons.clear),
+        backgroundColor: Colors.red,
+        tooltip: 'Clear Cart',
+      )
+          : null,
     );
   }
 
-  void _showAddressDialog(Medicine medicine) {
+  void _showCartDialog() {
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('Enter Delivery Address'),
-          content: TextField(
-            controller: addressController,
-            decoration: InputDecoration(hintText: "Enter your address"),
+          title: Text('Cart Items'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextField(
+                controller: addressController,
+                decoration: InputDecoration(hintText: "Enter your address"),
+              ),
+              SizedBox(height: 10),
+              ...cart.entries.map((entry) {
+                final medicine = medicines.firstWhere((med) => med.name == entry.key);
+                return ListTile(
+                  title: Text(medicine.name),
+                  subtitle: Text("Qty: ${entry.value}"),
+                  trailing: Text("\$${(medicine.price * entry.value).toStringAsFixed(2)}"),
+                );
+              }),
+              Divider(),
+              Text("Total: \$${calculateTotalPrice().toStringAsFixed(2)}"),
+            ],
           ),
           actions: [
             TextButton(
@@ -172,8 +280,12 @@ class _MedicineListScreenState extends State<MedicineListScreen> {
             TextButton(
               child: Text('Proceed to Payment'),
               onPressed: () {
-                Navigator.of(context).pop(); // Close the dialog
-                makePayment(medicine.price.toString(), 'USD', medicine.name);
+                Navigator.of(context).pop();
+                makePayment(
+                  calculateTotalPrice().toString(),
+                  'USD',
+                  cart.entries.map((e) => e.key).join(", "),
+                );
               },
             ),
           ],
@@ -181,10 +293,7 @@ class _MedicineListScreenState extends State<MedicineListScreen> {
       },
     );
   }
-
-  Future<void> makePayment(String amount, String currency, String medicineName) async {
-    print(medicineName);
-    print(amount);
+  Future<void> makePayment(String amount, String currency, String medicineNames) async {
     try {
       paymentIntentData = await createPaymentIntent(amount, currency);
 
@@ -196,21 +305,29 @@ class _MedicineListScreenState extends State<MedicineListScreen> {
         ),
       );
 
-      displayPaymentSheet(medicineName, amount);
+      displayPaymentSheet(medicineNames, amount);
     } catch (e, s) {
       print('Payment exception: $e$s');
     }
   }
 
-  displayPaymentSheet(String medicineName, String amount) async {
+  displayPaymentSheet(String medicineNames, String amount) async {
     try {
       await stripe.Stripe.instance.presentPaymentSheet().then((newValue) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text("Payment successful for $medicineName")),
+          SnackBar(content: Text("Payment successful for $medicineNames")),
         );
 
-        saveToFirestore(medicineName, amount, addressController.text);
+        // Updated loop to iterate over cart entries
+        for (var entry in cart.entries) {
+          final medicineName = entry.key; // Medicine name
+          final quantity = entry.value; // Quantity
+          final medicine = medicines.firstWhere((med) => med.name == medicineName); // Get the medicine object
+          saveToFirestore(medicineName, (medicine.price * quantity).toString(), addressController.text);
+        }
+
         paymentIntentData = null;
+        cart.clear(); // Clear cart after payment
       }).onError((error, stackTrace) {
         print('Exception/DISPLAYPAYMENTSHEET==> $error $stackTrace');
       });
@@ -226,6 +343,7 @@ class _MedicineListScreenState extends State<MedicineListScreen> {
     }
   }
 
+
   Future<Map<String, dynamic>> createPaymentIntent(String amount, String currency) async {
     try {
       Map<String, dynamic> body = {
@@ -233,17 +351,14 @@ class _MedicineListScreenState extends State<MedicineListScreen> {
         'currency': currency,
         'payment_method_types[]': 'card',
       };
-      print(body);
       var response = await http.post(
         Uri.parse('https://api.stripe.com/v1/payment_intents'),
         body: body,
         headers: {
-          'Authorization': 'Bearer ' +
-              'sk_test_51PKey5RqpLRvpy66026DAL2U96UAKIrKYXiy7sfu9axdFdhA6TGYnzTqrWESzEEnm3g5Nvfeg8dAb6uDtFqv2lZU00GJ7Aj09N',
+          'Authorization': 'Bearer sk_test_51PKey5RqpLRvpy66026DAL2U96UAKIrKYXiy7sfu9axdFdhA6TGYnzTqrWESzEEnm3g5Nvfeg8dAb6uDtFqv2lZU00GJ7Aj09N',
           'Content-Type': 'application/x-www-form-urlencoded'
         },
       );
-      print('Create Intent response ===> ${response.body.toString()}');
       return jsonDecode(response.body);
     } catch (err) {
       print('Error charging user: ${err.toString()}');
@@ -255,30 +370,6 @@ class _MedicineListScreenState extends State<MedicineListScreen> {
     final intAmount = (double.parse(amount) * 100).toInt();
     return intAmount.toString(); // Stripe expects the amount in cents as an integer
   }
-
-
-  /*void _handleStripeError(StripeException e) {
-    String errorMessage;
-
-    if (e.error.code == 'canceled') {
-      errorMessage = 'Payment was cancelled by the user.';
-    } else if (e.error.code == 'card_declined') {
-      errorMessage = 'Your card was declined. Please try another card.';
-    } else if (e.error.code == 'expired_card') {
-      errorMessage = 'Your card has expired. Please use a valid card.';
-    } else if (e.error.code == 'incorrect_cvc') {
-      errorMessage = 'The CVC code is incorrect. Please check and try again.';
-    } else if (e.error.code == 'processing_error') {
-      errorMessage = 'There was a processing error. Please try again later.';
-    } else {
-      errorMessage = 'Payment failed: ${e.error.message ?? 'An unknown error occurred.'}';
-    }
-
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(errorMessage)),
-    );
-  }*/
-
 
   void saveToFirestore(String medicineName, String amount, String address) async {
     final FirebaseFirestore firestore = FirebaseFirestore.instance;
@@ -292,9 +383,8 @@ class _MedicineListScreenState extends State<MedicineListScreen> {
     });
     await FirebaseFirestore.instance.collection('notifications').add({
       'userId': FirebaseAuth.instance.currentUser!.uid,
-      'message': 'Payment successfully sent and Order Placed for ${medicineName}.',
-      'timestamp': DateTime.now(),
+      'message': "Order placed for $medicineName. Total amount: $amount",
+      'timestamp': FieldValue.serverTimestamp(),
     });
-    addressController.clear();
   }
 }
